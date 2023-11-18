@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:instagram_app_flutter/responsive/mobile_screen_layout.dart';
 import 'package:instagram_app_flutter/responsive/responsive_layout.dart';
 import 'package:instagram_app_flutter/responsive/web_screen_layout.dart';
+import 'package:instagram_app_flutter/screens/login_screen.dart';
+import 'package:instagram_app_flutter/screens/signup_screen.dart';
 import 'package:instagram_app_flutter/utils/colors.dart';
 
 void main() async {
@@ -42,12 +44,13 @@ class MyApp extends StatelessWidget {
         // Setting up dark theme with some tweeks we need
         scaffoldBackgroundColor: mobileBackgroundColor,
       ),
-      home: const Scaffold(
-        body: ResponsiveLayout(
-          mobileScreenLayout: MobileScreenLayout(),
-          webScreenLayout: WebScreenLayout(),
-        ),
-      ),
+      // home: const Scaffold(
+      //   body: ResponsiveLayout(
+      //     mobileScreenLayout: MobileScreenLayout(),
+      //     webScreenLayout: WebScreenLayout(),
+      //   ),
+      // ),
+      home: SignupScreen(),
     );
   }
 }
