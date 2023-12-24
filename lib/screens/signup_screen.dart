@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagram_app_flutter/resources/auth_methods.dart';
+import 'package:instagram_app_flutter/responsive/mobile_screen_layout.dart';
+import 'package:instagram_app_flutter/responsive/responsive_layout.dart';
+import 'package:instagram_app_flutter/responsive/web_screen_layout.dart';
+import 'package:instagram_app_flutter/screens/login_screen.dart';
 import 'package:instagram_app_flutter/utils/colors.dart';
 import 'package:instagram_app_flutter/utils/utils.dart';
 import 'package:instagram_app_flutter/widgets/text_field_input.dart';
@@ -20,8 +24,9 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _passowordController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
-  // Profile picture image storing in global variable 
+  // Profile picture image storing in global variable
   Uint8List? _image;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -39,6 +44,47 @@ class _SignupScreenState extends State<SignupScreen> {
     setState(() {
       _image = img;
     });
+  }
+
+  // Function to store sign up credentials to firebase (Implementation in 'auth_methods.dart' file)
+  void signUpUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    String result = await AuthMethods().signUpUser(
+      email: _emailController.text,
+      password: _passowordController.text,
+      username: _usernameController.text,
+      bio: _bioController.text,
+      file: _image!,
+    );
+
+    // If string returned is sucess, user has been created
+    if (result == "success") {
+      setState(() {
+        _isLoading = false;
+      });
+      // Navigate to the home screen
+      if (context.mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const ResponsiveLayout(
+              mobileScreenLayout: MobileScreenLayout(),
+              webScreenLayout: WebScreenLayout(),
+            ),
+          ),
+        );
+      }
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+      // show the error
+      if (context.mounted) {
+        showSnackBar(context, result);
+      }
+    }
   }
 
   @override
@@ -134,16 +180,7 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
               // Button for Login using Container widget
               InkWell(
-                onTap: () async {
-                  String result = await AuthMethods().signUpUser(
-                    email: _emailController.text,
-                    password: _passowordController.text,
-                    username: _usernameController.text,
-                    bio: _bioController.text,
-                    file: _image!,
-                  );
-                  print(result);
-                },
+                onTap: signUpUser,
                 child: Container(
                   width: double.infinity,
                   alignment: Alignment.center,
@@ -156,7 +193,13 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     color: blueColor,
                   ),
-                  child: const Text('Sign Up'),
+                  child: _isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColor,
+                          ),
+                        )
+                      : const Text('Sign Up'),
                 ),
               ),
               const SizedBox(
@@ -172,14 +215,18 @@ class _SignupScreenState extends State<SignupScreen> {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: const Text("Don't have an account? "),
+                    child: const Text("Already have an account? "),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () => Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => const LoginScreen(),
+                      ),
+                    ),
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: const Text(
-                        "Sign Up",
+                        "Login",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),

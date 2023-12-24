@@ -15,3 +15,13 @@ pickImage(ImageSource source) async {
   // If File is NULL
   print('No Image Selected');
 }
+
+
+// For displaying snackbars (One of it using in 'signup_screen.dart' during invalid credentials)
+showSnackBar(BuildContext context, String text) {
+  return ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(text),
+    ),
+  );
+}
