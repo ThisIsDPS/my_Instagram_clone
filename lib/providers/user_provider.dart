@@ -14,6 +14,6 @@ class UserProvider with ChangeNotifier {
     // Assigning this to our global variable
     _user = user;
     // Notifies all the listners to this 'UserProvider' class that the data of our global variable '_user' has changed, so you need to update your value
-    notifyListeners(); 
+    notifyListeners();
   }
 }
